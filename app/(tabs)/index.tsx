@@ -1,74 +1,122 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Image, TouchableOpacity, Animated } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useRouter } from 'expo-router';
 
-export default function HomeScreen() {
+export default function WelcomeScreen() {
+  const router = useRouter();
+  
+  // Animaciones simples
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  
+  useEffect(() => {
+    // Animación inicial
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
+    <ThemedView style={styles.container}>
+
+      <Animated.View style={{ 
+        opacity: fadeAnim, 
+        transform: [{ translateY: fadeAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0],
+        })}]
+      }}>
+        <ThemedText type="title" style={styles.title}>
+          ¡Bienvenido!
         </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
+        
+        <ThemedText style={styles.subtitle}>
+          Explora nuestra app y disfruta de una experiencia increíble
         </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push('/login')}
+          activeOpacity={0.7}
+        >
+          <ThemedText style={styles.buttonText}>Comenzar</ThemedText>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push('/loginUser')}
+          activeOpacity={0.7}
+        >
+          <ThemedText style={styles.buttonText}>Usuarios</ThemedText>
+        </TouchableOpacity>
+
+        <ThemedText style={styles.footerText}>
+          Inicia sesión o regístrate para más opciones
         </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </Animated.View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 30,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  title: {
+    color: '#1D3D47',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: '#666',
+    marginBottom: 40,
+    paddingHorizontal: 20,
+  },
+  button: {
+    backgroundColor: '#A1CEDC',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 25,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  footerText: {
+    color: '#888',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
