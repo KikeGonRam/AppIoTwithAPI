@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, TextInput, View, Alert } from 'react-native';
+import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useRouter } from 'expo-router';
@@ -41,6 +42,25 @@ export default function UsersCreateScreen() {
     }
   };
 
+  const renderInputWithIcon = (icon, iconType, placeholder, key, secureTextEntry = false, keyboardType = 'default') => (
+    <View style={styles.inputContainer}>
+      <View style={styles.iconContainer}>
+        {iconType === 'Ionicons' && <Ionicons name={icon} size={20} color="#1D3D47" />}
+        {iconType === 'MaterialIcons' && <MaterialIcons name={icon} size={20} color="#1D3D47" />}
+        {iconType === 'FontAwesome' && <FontAwesome name={icon} size={20} color="#1D3D47" />}
+      </View>
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        placeholderTextColor="#999"
+        value={form[key]}
+        onChangeText={(text) => setForm({ ...form, [key]: text })}
+        secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
+      />
+    </View>
+  );
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
@@ -48,52 +68,66 @@ export default function UsersCreateScreen() {
       </ThemedText>
 
       <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Nombre"
-          value={form.nombre}
-          onChangeText={(text) => setForm({ ...form, nombre: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Apellido Paterno"
-          value={form.app}
-          onChangeText={(text) => setForm({ ...form, app: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Apellido Materno"
-          value={form.apm}
-          onChangeText={(text) => setForm({ ...form, apm: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Fecha de Nacimiento (YYYY-MM-DD)"
-          value={form.fn}
-          onChangeText={(text) => setForm({ ...form, fn: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Teléfono"
-          value={form.telefono}
-          onChangeText={(text) => setForm({ ...form, telefono: text })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={form.email}
-          onChangeText={(text) => setForm({ ...form, email: text })}
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          value={form.password}
-          onChangeText={(text) => setForm({ ...form, password: text })}
-          secureTextEntry
-        />
-        {error ? <ThemedText style={styles.error}>{error}</ThemedText> : null}
-        <TouchableOpacity style={styles.button} onPress={createUser}>
+        {renderInputWithIcon(
+          "person", 
+          "Ionicons", 
+          "Nombre", 
+          "nombre"
+        )}
+        {renderInputWithIcon(
+          "person-outline", 
+          "Ionicons", 
+          "Apellido Paterno", 
+          "app"
+        )}
+        {renderInputWithIcon(
+          "person-add", 
+          "Ionicons", 
+          "Apellido Materno", 
+          "apm"
+        )}
+        {renderInputWithIcon(
+          "calendar", 
+          "MaterialIcons", 
+          "Fecha de Nacimiento (YYYY-MM-DD)", 
+          "fn"
+        )}
+        {renderInputWithIcon(
+          "phone", 
+          "FontAwesome", 
+          "Teléfono", 
+          "telefono",
+          false,
+          "phone-pad"
+        )}
+        {renderInputWithIcon(
+          "email", 
+          "MaterialIcons", 
+          "Email", 
+          "email",
+          false,
+          "email-address"
+        )}
+        {renderInputWithIcon(
+          "lock", 
+          "FontAwesome", 
+          "Contraseña", 
+          "password",
+          true
+        )}
+
+        {error ? (
+          <View style={styles.errorContainer}>
+            <MaterialIcons name="error-outline" size={16} color="red" />
+            <ThemedText style={styles.error}> {error}</ThemedText>
+          </View>
+        ) : null}
+
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={createUser}
+        >
+          <Ionicons name="person-add" color="#fff" size={20} style={styles.buttonIcon} />
           <ThemedText style={styles.buttonText}>Crear Usuario</ThemedText>
         </TouchableOpacity>
       </View>
@@ -109,33 +143,70 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#1D3D47',
-    marginBottom: 20,
+    marginBottom: 30,
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   form: {
     marginBottom: 20,
   },
-  input: {
-    width: '100%',
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  iconContainer: {
+    backgroundColor: '#E6F0F4',
     padding: 10,
-    marginBottom: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  input: {
+    flex: 1,
+    padding: 12,
     backgroundColor: '#fff',
-    borderRadius: 5,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#E0E0E0',
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#A1CEDC',
     padding: 15,
     borderRadius: 25,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonIcon: {
+    marginRight: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   error: {
     color: 'red',
-    marginBottom: 20,
+    marginLeft: 5,
   },
 });

@@ -35,7 +35,7 @@ export default function RootLayout() {
         <Stack.Screen name="userscreate" options={{ title: 'Crear Usuario' }} />
         <Stack.Screen name="usersedit" options={{ title: 'Editar Usuario' }} />
         <Stack.Screen name="loginUser" options={{ title: 'Login de Usuarios' }} />
-        <Stack.Screen name="registerUser" options={{ title: 'Register de Usuarios' }} />
+        <Stack.Screen name="register" options={{ title: 'Registro de Usuario' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
